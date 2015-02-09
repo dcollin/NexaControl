@@ -2,7 +2,7 @@
 #include "limits.h"
 
 //#define DEBUG
-#define DUPLICATE_SIGNAL_DELAY 1000
+#define DUPLICATE_SIGNAL_DELAY 250
 
 NexaSelfLearningReceiver::NexaSelfLearningReceiver(uint8_t pin, uint8_t led) : rxPin(pin), rxLED(led), prevReceivedSignal(0), prevReceivedSignalTime(0) {
     pinMode(rxPin, INPUT);
@@ -42,18 +42,32 @@ uint64_t NexaSelfLearningReceiver::receiveSignal(uint32_t* sender, bool* on, boo
         bit = 1;
     }else if(pulseLength > 8000 && pulseLength < 12000){    //end
         break;
-    }else{  //unknown length or pulseIn timeout
+    }else if(pulseLength == 0){  //unknown length or pulseIn timeout
+        #ifdef DEBUG
+        Serial.println("NEXA Receiver: ERROR, pulse timeout.");
+        #endif
+        error = true;
+        break;
+    }else{
+        #ifdef DEBUG
+        Serial.println("NEXA Receiver: ERROR, unknown pulse length.");
+        #endif
         error = true;
         break;
     }
     if(bitsReceived == 72){     //no end signal received yet
+        #ifdef DEBUG
         Serial.println("NEXA Receiver: ERROR, The 72th pulse is not an END.");
+        #endif
         error = true;
         break;
     }
  
     if (bitsReceived % 2 == 1){    //received the second bit in a pair
       if (prevBit == bit){ // only "01" or "10" ok
+        #ifdef DEBUG
+        Serial.println("NEXA Receiver: ERROR, received a faulty pulse pair.");
+        #endif
         error = true;
         break;
       }    
@@ -136,7 +150,7 @@ bool NexaSelfLearningReceiver::isDuplicateSinal(const uint64_t* receivedData) co
         unsigned long currentTime = millis();
         if(currentTime > prevReceivedSignalTime){
             return ( currentTime-prevReceivedSignalTime < DUPLICATE_SIGNAL_DELAY );
-        }else if(currentTime > prevReceivedSignalTime){
+        }else if(currentTime < prevReceivedSignalTime){
             return ( (ULONG_MAX - prevReceivedSignalTime) + currentTime < DUPLICATE_SIGNAL_DELAY );
         }
     }
