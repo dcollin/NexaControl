@@ -47,7 +47,7 @@ uint64_t NexaSelfLearningReceiver::receiveSignal(uint32_t* sender, bool* on, boo
         break;
     }
     if(bitsReceived == 72){     //no end signal received yet
-        Serial.println("NEXA Receiver: ERROR, The 72th pulse is not a END.");
+        Serial.println("NEXA Receiver: ERROR, The 72th pulse is not an END.");
         error = true;
         break;
     }
@@ -71,12 +71,10 @@ uint64_t NexaSelfLearningReceiver::receiveSignal(uint32_t* sender, bool* on, boo
   if(error){
       #ifdef DEBUG
       Serial.println("NEXA Receiver: ERROR, Received corrupt signal over air:");
-      for(int i = bitsReceived-1; i >= 0; --i){
+      for(int i = (bitsReceived==64?32:36); i >= 0; --i){
           Serial.print( (receivedData >> i)&&0x0F, BIN);
       }
       Serial.println("");
-      Serial.print("length = ");
-      Serial.println(bitsReceived);
       #endif
       return 0;
   }else if(isDuplicateSinal(&receivedData)){
