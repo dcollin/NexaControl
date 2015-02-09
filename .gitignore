@@ -1,4 +1,4 @@
-.tmp
+*.tmp
 
 # Compiled Object files
 *.slo
