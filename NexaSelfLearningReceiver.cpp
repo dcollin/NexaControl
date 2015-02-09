@@ -1,14 +1,15 @@
 #include "NexaSelfLearningReceiver.h"
 #include "limits.h"
 
-#define DEBUG
+//#define DEBUG
 #define DUPLICATE_SIGNAL_DELAY 1000
 
 NexaSelfLearningReceiver::NexaSelfLearningReceiver(uint8_t pin, uint8_t led) : rxPin(pin), rxLED(led), prevReceivedSignal(0), prevReceivedSignalTime(0) {
+    pinMode(rxPin, INPUT);
     pinMode(rxLED, OUTPUT);
 };
 
-uint64_t NexaSelfLearningReceiver::receiveSignal(uint32_t* sender, bool* on, bool* group, uint8_t* channel, uint8_t* dim, unsigned long timeout) {
+uint64_t NexaSelfLearningReceiver::receiveSignal(uint32_t* sender, bool* on, bool* group, uint8_t* channel, short* dim, unsigned long timeout) {
   
   unsigned long startTime = millis();
   unsigned long pulseLength = 0;
@@ -84,14 +85,18 @@ uint64_t NexaSelfLearningReceiver::receiveSignal(uint32_t* sender, bool* on, boo
       #endif
       return 0;
   }else if(bitsReceived == 64){
+      #ifdef DEBUG
       Serial.println("NEXA Receiver: INFO, Received a signal with 64 pulses (32 bits) of data (no dim).");
+      #endif
       *sender = receivedData >> 6;
       *group = (receivedData >> 5) & 0x01;
       *on = (receivedData >> 4) & 0x01;
       *channel = receivedData & 0x0F;
       *dim = -1;
   }else if(bitsReceived == 72){
+      #ifdef DEBUG
       Serial.println("NEXA Receiver: INFO, Received a signal with 72 pulses (36 bits) of data (with dim).");
+      #endif
       *sender = receivedData >> 10;
       *group = (receivedData >> 9) & 0x01;
       *on = (receivedData >> 8) & 0x01;
@@ -106,7 +111,25 @@ uint64_t NexaSelfLearningReceiver::receiveSignal(uint32_t* sender, bool* on, boo
       return 0;
   }
   
+  #ifdef DEBUG
+  Serial.print("Raw = ");
+  for(int i = (*dim==-1?32:36); i >= 0; --i){
+      Serial.print( (byte)((receivedData>>i) & 0x01), BIN);
+  }
+  Serial.print(", transmitter_id="); Serial.print(*sender);
+  Serial.print(", group="); Serial.print(*group);
+  Serial.print(", on="); Serial.print(*on);
+  Serial.print(", channel="); Serial.print(*channel);
+  Serial.print(", dim="); Serial.print(*dim);
+  if(*dim == -1){
+      Serial.println("(not set)");
+  }else{
+      Serial.println("");
+  }
+  #endif
+  
   prevReceivedSignal = receivedData;
+  prevReceivedSignalTime = millis();
   return receivedData;
 };
 

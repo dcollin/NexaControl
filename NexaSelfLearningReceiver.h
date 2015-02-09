@@ -7,7 +7,7 @@ class NexaSelfLearningReceiver{
 
 public:
     NexaSelfLearningReceiver(uint8_t pin, uint8_t led);
-    uint64_t receiveSignal(uint32_t* sender, bool* on, bool* group, uint8_t* channel, uint8_t* dim, unsigned long timeout = 100);
+    uint64_t receiveSignal(uint32_t* sender, bool* on, bool* group, uint8_t* channel, short* dim, unsigned long timeout = 100);
     
 private:
     bool isDuplicateSinal(const uint64_t* receivedData) const;

@@ -2,6 +2,7 @@
 
 
 NexaSelfLearningTransmitter::NexaSelfLearningTransmitter(uint8_t pin, uint8_t led) : txPin(pin), txLED(led) {
+    pinMode(txPin, OUTPUT);
     pinMode(txLED, OUTPUT);
 };
 
@@ -41,7 +42,7 @@ void NexaSelfLearningTransmitter::transmitSignal(const uint32_t transmitter, con
         sendBuffer |= (dim & 0x0F);
     }
     
-    uint8_t bufferLength = (dim == -1 ? 32 : 36);
+    short bufferLength = (dim == -1 ? 32 : 36);
     
     digitalWrite(txLED, HIGH);
     
@@ -51,7 +52,7 @@ void NexaSelfLearningTransmitter::transmitSignal(const uint32_t transmitter, con
         sendPreamble();
         
         //send the data
-        for(uint8_t j = bufferLength-1; j >= 0; --j){   //send all bits in buffer
+        for(short j = bufferLength-1; j >= 0; --j){   //send all bits in buffer
             bool bit = (sendBuffer >> j) & 0x01;
             if(bit){
                 //send a binary "1" as 10 over air
@@ -86,14 +87,14 @@ void NexaSelfLearningTransmitter::sendEnd() const {
     delayMicroseconds(10000);
 }
 
-void NexaSelfLearningTransmitter::sendOne() const {
+void NexaSelfLearningTransmitter::sendZero() const {
     digitalWrite(txPin, HIGH);
     delayMicroseconds(250);
     digitalWrite(txPin, LOW);
     delayMicroseconds(250);
 };
 
-void NexaSelfLearningTransmitter::sendZero() const {
+void NexaSelfLearningTransmitter::sendOne() const {
     digitalWrite(txPin, HIGH);
     delayMicroseconds(250);
     digitalWrite(txPin, LOW);

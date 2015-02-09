@@ -30,5 +30,8 @@ void setup(){
 };
 
 void loop(){
-    
+    transmitter.deviceOn(TRANSMITTER_ID, 3);
+    delay(1000);
+    transmitter.deviceOff(TRANSMITTER_ID, 3);
+    delay(1000);
 };
