@@ -14,8 +14,8 @@ private:
 
     uint8_t rxPin;
     uint8_t rxLED;
-    uint64_t prevReceivedSignal;
-    unsigned long prevReceivedSignalTime;
+    uint64_t prevReceivedData;
+    unsigned long prevReceivedDataTime;
     
 };
 

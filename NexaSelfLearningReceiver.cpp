@@ -4,7 +4,7 @@
 //#define DEBUG
 #define DUPLICATE_SIGNAL_DELAY 250
 
-NexaSelfLearningReceiver::NexaSelfLearningReceiver(uint8_t pin, uint8_t led) : rxPin(pin), rxLED(led), prevReceivedSignal(0), prevReceivedSignalTime(0) {
+NexaSelfLearningReceiver::NexaSelfLearningReceiver(uint8_t pin, uint8_t led) : rxPin(pin), rxLED(led), prevReceivedData(0), prevReceivedDataTime(0) {
     pinMode(rxPin, INPUT);
     pinMode(rxLED, OUTPUT);
 };
@@ -46,20 +46,17 @@ uint64_t NexaSelfLearningReceiver::receiveSignal(uint32_t* sender, bool* on, boo
         #ifdef DEBUG
         Serial.println("NEXA Receiver: ERROR, pulse timeout.");
         #endif
-        error = true;
         break;
     }else{
         #ifdef DEBUG
         Serial.println("NEXA Receiver: ERROR, unknown pulse length.");
         #endif
-        error = true;
         break;
     }
     if(bitsReceived == 72){     //no end signal received yet
         #ifdef DEBUG
         Serial.println("NEXA Receiver: ERROR, The 72th pulse is not an END.");
         #endif
-        error = true;
         break;
     }
  
@@ -140,18 +137,18 @@ uint64_t NexaSelfLearningReceiver::receiveSignal(uint32_t* sender, bool* on, boo
   }
   #endif
   
-  prevReceivedSignal = receivedData;
-  prevReceivedSignalTime = millis();
+  prevReceivedData = receivedData;
+  prevReceivedDataTime = millis();
   return receivedData;
 };
 
 bool NexaSelfLearningReceiver::isDuplicateSinal(const uint64_t* receivedData) const{
-    if(prevReceivedSignal == *receivedData){
+    if(prevReceivedData == *receivedData){
         unsigned long currentTime = millis();
-        if(currentTime > prevReceivedSignalTime){
-            return ( currentTime-prevReceivedSignalTime < DUPLICATE_SIGNAL_DELAY );
-        }else if(currentTime < prevReceivedSignalTime){
-            return ( (ULONG_MAX - prevReceivedSignalTime) + currentTime < DUPLICATE_SIGNAL_DELAY );
+        if(currentTime > prevReceivedDataTime){
+            return ( currentTime-prevReceivedDataTime < DUPLICATE_SIGNAL_DELAY );
+        }else if(currentTime < prevReceivedDataTime){
+            return ( (ULONG_MAX - prevReceivedDataTime) + currentTime < DUPLICATE_SIGNAL_DELAY );
         }
     }
     return false;
