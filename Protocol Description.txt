@@ -1,0 +1,49 @@
+
+
+----SIGNAL----
+A signal consists of a PREAMBLE, DATA and an END.
+Each signal is sent 4 times in a row to increase the delivery success rate.
+
+
+
+----PREAMBLE----
+send low for 250 microseconds
+send high for 2,500 microseconds
+
+
+
+----DATA----
+26 bits of transmitter id
+1 bit indicating if the on signal is targeting a group
+1 bit indicating "on" or "off"
+4 bits indicating the targeted unit/channel
+4 bits indicating a absolute dim level (optional)
+
+Total: 32 or 36 bits depending if absolute dimming is used
+
+Each real bit in the data field is sent over air as a pair of two inverted bits.
+  real bit        bits over air
+     1       =        "10"
+     0       =        "01"
+
+Over air a "1"(one) is sent as:
+send low for 250 microseconds
+send high for 1,250 microseconds
+
+Over air a "0"(zero) is sent as:
+send low for 250 microseconds
+send high for 250 microseconds
+
+
+
+----END----
+send low for 250 microseconds
+send high for 10,000 microseconds
+
+
+
+----TIMING----
+The theoretical time for sending one signal is 77ms (32 bit data) or 85ms (36 bit data).
+The total time spent for sending all 4 signals is therefore 308ms / 340ms
+Each implementation is unique and will therefore have some drift from the exact timings. 
+It is good to expect some variation in the pulse timings (e.g. +/- 200 microseconds).

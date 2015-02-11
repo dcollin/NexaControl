@@ -8,9 +8,9 @@ class NexaSelfLearningTransmitter{
 public:
     NexaSelfLearningTransmitter(uint8_t pin, uint8_t led);
     
-    void deviceOn(const uint32_t transmitter, const uint8_t device) const;
-    void deviceOff(const uint32_t transmitter, const uint8_t device) const;
-    void deviceDim(const uint32_t transmitter, const uint8_t device, const short dim) const;
+    void deviceOn(const uint32_t transmitter, const uint8_t channel) const;
+    void deviceOff(const uint32_t transmitter, const uint8_t channel) const;
+    void deviceDim(const uint32_t transmitter, const uint8_t channel, const short dim) const;
     void groupOn(const uint32_t transmitter) const;
     void groupOff(const uint32_t transmitter) const;
     

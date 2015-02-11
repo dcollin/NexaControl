@@ -1,21 +1,24 @@
 #include "NexaSelfLearningTransmitter.h"
+#include "NexaSelfLearningConstants.inc"
 
 
 NexaSelfLearningTransmitter::NexaSelfLearningTransmitter(uint8_t pin, uint8_t led) : txPin(pin), txLED(led) {
     pinMode(txPin, OUTPUT);
-    pinMode(txLED, OUTPUT);
+    if(txLED != NULL){
+        pinMode(txLED, OUTPUT);
+    }
 };
 
-void NexaSelfLearningTransmitter::deviceOn(const uint32_t transmitter, const uint8_t device) const {
-    transmitSignal(transmitter, false, true, device);
+void NexaSelfLearningTransmitter::deviceOn(const uint32_t transmitter, const uint8_t channel) const {
+    transmitSignal(transmitter, false, true, channel);
 };
 
-void NexaSelfLearningTransmitter::deviceOff(const uint32_t transmitter, const uint8_t device) const {
-    transmitSignal(transmitter, false, false, device);
+void NexaSelfLearningTransmitter::deviceOff(const uint32_t transmitter, const uint8_t channel) const {
+    transmitSignal(transmitter, false, false, channel);
 };
 
-void NexaSelfLearningTransmitter::deviceDim(const uint32_t transmitter, const uint8_t device, const short dim) const {
-    transmitSignal(transmitter, false, true, device, dim);
+void NexaSelfLearningTransmitter::deviceDim(const uint32_t transmitter, const uint8_t channel, const short dim) const {
+    transmitSignal(transmitter, false, true, channel, dim);
 };
 
 void NexaSelfLearningTransmitter::groupOn(const uint32_t transmitter) const {
@@ -44,7 +47,8 @@ void NexaSelfLearningTransmitter::transmitSignal(const uint32_t transmitter, con
     
     short bufferLength = (dim == -1 ? 32 : 36);
     
-    digitalWrite(txLED, HIGH);
+    // turn on TX led if specified
+    if(txLED != NULL){digitalWrite(txLED, HIGH);}
     
     //send the buffer 4 times
     for (uint8_t i = 0; i < 4; ++i) {
@@ -55,11 +59,11 @@ void NexaSelfLearningTransmitter::transmitSignal(const uint32_t transmitter, con
         for(short j = bufferLength-1; j >= 0; --j){   //send all bits in buffer
             bool bit = (sendBuffer >> j) & 0x01;
             if(bit){
-                //send a binary "1" as 10 over air
+                //send a binary "1" as "10" over air
                 sendOne();
                 sendZero();
             }else{
-                //send a binary "0" as 01 over air
+                //send a binary "0" as "01" over air
                 sendZero();
                 sendOne();
             }
@@ -69,34 +73,35 @@ void NexaSelfLearningTransmitter::transmitSignal(const uint32_t transmitter, con
     
     }
     
-    digitalWrite(txLED, LOW);
+    // turn off TX led if specified
+    if(txLED != NULL){digitalWrite(txLED, LOW);}
     
 };
 
 void NexaSelfLearningTransmitter::sendPreamble() const {
     digitalWrite(txPin, HIGH);
-    delayMicroseconds(250);
+    delayMicroseconds(PREAMBLE_HIGH);
     digitalWrite(txPin, LOW);
-    delayMicroseconds(2500);
+    delayMicroseconds(PREAMBLE_LOW);
 }
 
 void NexaSelfLearningTransmitter::sendEnd() const {
     digitalWrite(txPin, HIGH);
-    delayMicroseconds(250);
+    delayMicroseconds(END_HIGH);
     digitalWrite(txPin, LOW);
-    delayMicroseconds(10000);
+    delayMicroseconds(END_LOW);
 }
 
 void NexaSelfLearningTransmitter::sendZero() const {
     digitalWrite(txPin, HIGH);
-    delayMicroseconds(250);
+    delayMicroseconds(ZERO_HIGH);
     digitalWrite(txPin, LOW);
-    delayMicroseconds(250);
+    delayMicroseconds(ZERO_LOW);
 };
 
 void NexaSelfLearningTransmitter::sendOne() const {
     digitalWrite(txPin, HIGH);
-    delayMicroseconds(250);
+    delayMicroseconds(ONE_HIGH);
     digitalWrite(txPin, LOW);
-    delayMicroseconds(1250);
+    delayMicroseconds(ONE_LOW);
 };
