@@ -37,7 +37,7 @@ uint64_t NexaSelfLearningReceiver::receiveSignal(uint32_t* transmitter, bool* on
   uint64_t receivedData = 0;
   while(bitsReceived <= 72){          //0-51=transmitter, 52-53=on, 54-55=group, 56-63=channel, [64=end] or [64-71=dim, 72=END]
     pulseLength = pulseIn(rxPin, LOW, END_LOW_MAX);
-    if (ZERO_LOW_MIN < pulseLength && pulseLength < ZERO_LOW_MIN){
+    if (ZERO_LOW_MIN < pulseLength && pulseLength < ZERO_LOW_MAX){
         bit = 0;
     }else if (ONE_LOW_MIN < pulseLength && pulseLength < ONE_LOW_MAX){
         bit = 1;
