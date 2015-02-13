@@ -1,7 +1,6 @@
 #include "NexaSelfLearningTransmitter.h"
 #include "NexaSelfLearningConstants.inc"
 
-
 NexaSelfLearningTransmitter::NexaSelfLearningTransmitter(uint8_t pin, uint8_t led) : txPin(pin), txLED(led) {
     pinMode(txPin, OUTPUT);
     if(txLED != NULL){
@@ -105,3 +104,4 @@ void NexaSelfLearningTransmitter::sendOne() const {
     digitalWrite(txPin, LOW);
     delayMicroseconds(ONE_LOW);
 };
+
