@@ -62,22 +62,7 @@ public:
     * @arg dim - The absolute dim value to be sent to a device (default = NULL). (******EXPERIMENTAL*****)
     */
     void transmitSignal(const uint32_t transmitter, const bool group, const bool on, const uint8_t channel, const short dim = -1) const;
-    
-    /**
-    * Generate a random 26-bit Transmitter-ID. Note that this function will not generate a true random number.
-    */
-    static uint32_t generateUniqueTransmitterId(){
-        uint32_t seed = random();   //random could contain some entropy, lets keep it.
-        for(uint8_t i = 0; i < 13; ++i){
-            uint16_t a = analogRead(0);  //collect some entropy from analog pin 0 (has to be unconnected)
-            seed <<= 3;
-            seed += ( a % 17 );
-            delayMicroseconds( 7 + (a % 11) );
-        }
-        randomSeed(seed);   //use the generated seed
-        return random(TRANSMITTER_ID_MIN, TRANSMITTER_ID_MAX);
-    };
-    
+        
 private:
     
     /**
