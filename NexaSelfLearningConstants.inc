@@ -28,8 +28,8 @@
 //the time (in ms) during which a duplicate signal is ignored.
 #define DUPLICATE_SIGNAL_DELAY   250
 
-//value boundaries when generating transmitter IDs.
-#define TRANSMITTER_ID_MIN  2049
-#define TRANSMITTER_ID_MAX  67106814   //((2^26)-1)-2049
+//value boundaries for valid transmitter IDs.
+#define TRANSMITTER_ID_MIN  1
+#define TRANSMITTER_ID_MAX  67108863   //((2^26)-1)
 
 #endif  //NEXA_SELF_LEARNING_CONSTANTS
