@@ -16,15 +16,15 @@ send low for 2,500 microseconds
 26 bits of transmitter id
 1 bit indicating if the on signal is targeting a group
 1 bit indicating "on" or "off"
-4 bits indicating the targeted unit/channel/device
+4 bits indicating the targeted unit/channel
 4 bits indicating a absolute dim level (optional)
 
 Total: 32 or 36 bits depending if absolute dimming is used
 
 Each real bit in the data field is sent over air as a pair of two inverted bits.
   real bit        bits over air
-     1       =        "10"
-     0       =        "01"
+     1       =        "01"
+     0       =        "10"
 
 Over air a "1"(one) is sent as:
 send high for 250 microseconds
